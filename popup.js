@@ -14,7 +14,7 @@
 
     // open background page
     document.getElementById('open-background-page').addEventListener('click', function () {
-        chrome.runtime.sendMessage({ action: 'openbackgroundpage' }, function (res) {
+        chrome.runtime.sendMessage({ action: 'openbackgroundpage'}, function (res) {
             if (res === 'ok') {
                 window.close();
             }
