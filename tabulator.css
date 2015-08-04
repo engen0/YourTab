@@ -27,6 +27,7 @@ body {
 .group:first-of-type {
 	margin-top: 10px;
 }
+
 .group {
 	margin-top: 20px;
 }
@@ -43,6 +44,7 @@ body {
 	margin-left: 5px;
 	cursor: pointer;
 }
+
 .restore-all:hover {
 	color: blue;
 	text-decoration: underline;
@@ -67,12 +69,15 @@ li {
 	padding: 0 .3em;
 	margin-right: 10px;
 }
+
 .delete-link:before {
 	content: "X";
 }
+
 *:hover > .delete-link {
 	background: #aaa;
 }
+
 .delete-link:hover {
 	background: red;
 	cursor: pointer;
@@ -83,6 +88,7 @@ li {
 	text-decoration: none;
 	padding: .2em;
 }
+
 .link:hover {
 	cursor: pointer;
 	text-decoration: underline;

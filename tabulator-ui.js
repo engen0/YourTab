@@ -1,4 +1,5 @@
-;(function (m) {
+;
+(function (m) {
     'use strict';
 
     chrome.storage.sync.get(function (storage) {
@@ -6,18 +7,18 @@
         var tabs = {}, // to-be module
             tabGroups = storage.tabGroups || [], // tab groups
             opts = storage.options || {
-                deleteTabOnOpen: 'no'
-            };
+                    deleteTabOnOpen: 'no'
+                };
 
         function saveTabGroups(json) {
-            chrome.storage.sync.set({ tabGroups: json });
+            chrome.storage.sync.set({tabGroups: json});
         }
 
         // model entity
         // 'data' is meant to be a tab group object from localStorage
         tabs.TabGroup = function (data) {
             this.date = m.prop(data.date);
-            this.id   = m.prop(data.id);
+            this.id = m.prop(data.id);
             this.tabs = m.prop(data.tabs);
         };
 
@@ -35,7 +36,7 @@
                     // remove view from array
                     vm.list.splice(i, 1);
                     // remove from localStorage
-                    tabGroups.splice(i, 1)
+                    tabGroups.splice(i, 1);
                     // save
                     saveTabGroups(tabGroups);
                 };
@@ -70,51 +71,59 @@
                 // group
                 return m('div.group', [
                     m('div.group-title', [
-                        m('span.delete-link', { onclick: function () {
-                            tabs.vm.rmGroup(i);
-                        } }),
+                        m('span.delete-link', {
+                            onclick: function () {
+                                tabs.vm.rmGroup(i);
+                            }
+                        }),
                         m('span.group-amount', group.tabs().length + ' Tabs'),
                         ' ',
                         m('span.group-date', moment(group.date()).format('HH:mm:ss, YYYY-MM-DD')),
                         ' ',
-                        m('span.restore-all', { onclick: function () {
-                            var i;
+                        m('span.restore-all', {
+                            onclick: function () {
+                                var i;
 
-                            // reason this goes before opening the tabs and not
-                            // after is because it doesn't work otherwise
-                            // I imagine it's because you changed tab and so
-                            // that messes with the focus of the JS somehow...
-                            if (opts.deleteTabOnOpen === 'yes') {
-                                tabs.vm.rmGroup(i);
-                            }
+                                // reason this goes before opening the tabs and not
+                                // after is because it doesn't work otherwise
+                                // I imagine it's because you changed tab and so
+                                // that messes with the focus of the JS somehow...
+                                if (opts.deleteTabOnOpen === 'yes') {
+                                    tabs.vm.rmGroup(i);
+                                }
 
-                            for (i = 0; i < group.tabs().length; i += 1) {
-                                chrome.tabs.create({
-                                    url: group.tabs()[i].url,
-                                    pinned: group.tabs()[i].pinned
-                                });
+                                for (i = 0; i < group.tabs().length; i += 1) {
+                                    chrome.tabs.create({
+                                        url: group.tabs()[i].url,
+                                        pinned: group.tabs()[i].pinned
+                                    });
+                                }
                             }
-                        } }, 'Restore group')
+                        }, 'Restore group')
                     ]),
 
                     // foreach tab
                     m('ul', group.tabs().map(function (tab, ii) {
                         return m('li', [
-                            m('span.delete-link', { onclick: function () {
-                                tabs.vm.rmTab(i, ii);
-                            } }),
-                            m('img', { src: tab.favIconUrl, height: '16', width: '16' }),
-                            ' ',
-                            m('span.link', { onclick: function () {
-                                if (opts.deleteTabOnOpen === 'yes') {
+                            m('span.delete-link', {
+                                onclick: function () {
                                     tabs.vm.rmTab(i, ii);
                                 }
+                            }),
+                            m('img', {src: tab.favIconUrl, height: '16', width: '16'}),
+                            ' ',
+                            m('span.link', {
+                                onclick: function () {
+                                    if (opts.deleteTabOnOpen === 'yes') {
+                                        tabs.vm.rmTab(i, ii);
+                                    }
 
-                                chrome.tabs.create({
-                                    url: tab.url,
-                                    pinned: tab.pinned
-                                });
-                            } }, tab.title)
+                                    chrome.tabs.create({
+                                        url: tab.url,
+                                        pinned: tab.pinned
+                                    });
+                                }
+                            }, tab.title)
                         ]);
                     }))
                 ]);
@@ -122,7 +131,7 @@
         };
 
         // init the app
-        m.module(document.getElementById('groups'), { controller: tabs.controller, view: tabs.view });
+        m.module(document.getElementById('groups'), {controller: tabs.controller, view: tabs.view});
 
     });
 

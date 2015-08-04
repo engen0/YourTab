@@ -1,6 +1,6 @@
-// TODO quick jump with overlay/ popup
-// TODO hotkey to add current page/ right click on tab and clicking/ hold shift and click or sth
 // TODO selection box
+// TODO hotkey to add current page/ right click on tab and clicking/ hold shift and click or sth
+// TODO quick jump with overlay/ popup
 // TODO  context instead of closing and reopening everything e.g. open all/ switch to
 // TODO folder groups/folder thumbnail view / expandable list groups
 // TODO sync with parse?? cloud sync across devices or in chrome
@@ -83,13 +83,17 @@
         }
     }
 
+    function saveTabs(tabsArr) {
+        var tabGroup = chain(filterTabs, makeTabGroup)(tabsArr);
+        openOrGoToBackgroundPage(tabsArr);
+        saveTabGroup(tabGroup);
+        closeTabs(tabGroup.tabs);
+    }
+
     chrome.runtime.onMessage.addListener(function (req, sender, sendRes) {
         switch (req.action) {
             case 'save':
-                var targetTabs = chain(filterTabs, makeTabGroup)(req.tabsArr);
-                openOrGoToBackgroundPage(req.tabsArr);
-                saveTabGroup(targetTabs);
-                closeTabs(targetTabs);
+                saveTabs(req.tabsArr);
                 sendRes('ok');
                 break;
             case 'openbackgroundpage':

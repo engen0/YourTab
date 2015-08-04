@@ -12,14 +12,25 @@
     "page": "tabulator.html",
     "persistent": false
   },
-  "commands":{
-    "toggle-jump-index":{
+  "commands": {
+    "toggle-jump-index": {
       "suggested_key": {
         "default": "Ctrl+Q"
       },
       "description": "Toggle jump index on tabs."
     }
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "modal.js",
+        "js/jquery.js"
+      ]
+    }
+  ],
   "options_page": "options.html",
   "permissions": [
     "tabs",

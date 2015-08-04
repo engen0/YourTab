@@ -26,6 +26,7 @@ body {
 .option {
 	margin: 15px 0;
 }
+
 .option:first-of-type {
 	margin-top: 0;
 }
@@ -35,6 +36,7 @@ body {
 	font-size: 1.1em;
 	margin-bottom: 5px;
 }
+
 .choices {
 	font-size: .9em;
 }
