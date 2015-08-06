@@ -1,4 +1,3 @@
-// TODO selection box
 // TODO hotkey to add current page/ right click on tab and clicking/ hold shift and click or sth
 // TODO quick jump with overlay/ popup
 // TODO  context instead of closing and reopening everything e.g. open all/ switch to
@@ -28,30 +27,14 @@
 
     function saveTabGroup(tabGroup) {
         chrome.storage.sync.get('tabGroups', function (storage) {
-            var newArr;
+            var newArr = [];
 
             if (storage.tabGroups) {
                 newArr = storage.tabGroups;
-                newArr.push(tabGroup);
-
-                chrome.storage.sync.set({tabGroups: newArr});
-            } else {
-                chrome.storage.sync.set({tabGroups: [tabGroup]});
             }
-        });
-    }
+            newArr.push(tabGroup);
 
-    function filterTabs(tabsArr) {
-        return tabsArr.filter(function (tab) {
-            if (isOurTab(tab)) {
-                console.log("Url: " + tab.url)
-                //not our own page
-                return false;
-            } else if (tab.pinned) {
-                return false;
-            }
-
-            return true;
+            chrome.storage.sync.set({tabGroups: newArr});
         });
     }
 
@@ -69,6 +52,7 @@
     }
 
     function openOrGoToBackgroundPage(tabsArr) {
+        // TODO still opens multiple
         var extensionTabs = tabsArr.filter(function (tab) {
             return isOurTab(tab);
         }).map(function (tab) {
@@ -84,8 +68,8 @@
     }
 
     function saveTabs(tabsArr) {
-        var tabGroup = chain(filterTabs, makeTabGroup)(tabsArr);
-        openOrGoToBackgroundPage(tabsArr);
+        var tabGroup = makeTabGroup(tabsArr);
+        getAllTabsAndThen(openOrGoToBackgroundPage);
         saveTabGroup(tabGroup);
         closeTabs(tabGroup.tabs);
     }
@@ -98,14 +82,13 @@
                 break;
             case 'openbackgroundpage':
                 sendRes('ok');
-                getAllTabsAndThen(openOrGoToBackgroundPage)
+                getAllTabsAndThen(openOrGoToBackgroundPage);
                 break;
             default:
                 sendRes('nope');
                 break;
         }
     });
-
 
     chrome.commands.onCommand.addListener(function (command) {
         console.log('Command:', command);

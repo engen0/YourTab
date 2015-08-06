@@ -26,6 +26,10 @@
             "height": "1083px",
             "width": "100%"
         });
+        wrapperDiv.click(function () {
+            $(dialogDiv).remove();
+            $(wrapperDiv).remove();
+        });
 
         var dialogDiv = $('<div id="dialog"> </div>');
         dialogDiv.css({
@@ -40,40 +44,92 @@
             "top": "20%",
             "left": "43%"
         });
+
         // Title
         var title = $('<h3></h3>').text("Select Tabs to Save");
         dialogDiv.append(title);
 
         //Each tab
-        tabsArr.forEach(function (tab) {
+        var targetTabs = filterTabs(tabsArr);
+        targetTabs.forEach(function (tab) {
             tab.selected = true;
             var row = $('<div id="row"> </div>');
             row.css({
-                "padding": "1em"
+                "padding": "1em",
+                "cursor": "pointer"
             });
+            row.hover(
+                function () {
+                    $(this).css({
+                        "text-decoration": "underline"
+                    })
+                },
+                function () {
+                    $(this).css({
+                        "text-decoration": "none"
+                    });
+                }
+            );
+
+            var favIcon = $('<span></span>');
+            favIcon.css({
+                "background": "url(" + tab.favIconUrl + ")",
+                "height": "16px",
+                "width": "16px",
+                "background-size": "contain",
+                "float":"left",
+                "margin-left":"0.5em",
+                "position":"absolute"
+            });
+
             var checkbox = $('<input>', {
                 type: "checkbox",
-                "checked": "checked"
+                "checked": true
+            });
+            checkbox.css({
+                "vertical-align":"middle"
             });
             checkbox.click(function () {
                 tab.selected = !tab.selected;
+                //$(this).prop('checked', false);
             });
+
+            row.click(function () {
+                checkbox.click();
+                tab.selected = !tab.selected;
+            });
+
             var tabTitle = $("<p> </p>").text(tab.title);
             tabTitle.css({
                 "display": "inline",
-                "margin-left": "1em"
+                "margin-left": "2.5em"
             });
+
             row.append(checkbox);
+            row.append(favIcon);
             row.append(tabTitle);
             dialogDiv.append(row);
         });
 
         // Buttons
+        // TODO checkbox next time
+        /*$('#checkAll').click(function () {
+         $('input:checkbox').prop('checked', this.checked);
+         });*/
+
         var saveButton = $("<button> Save </button>");
         saveButton.click(function () {
-            console.log(tabsArr);
-            $(dialogDiv).remove();
-            $(wrapperDiv).remove();
+            var selectedTabs = targetTabs.filter(function (tab) {
+                return tab.selected;
+            });
+            console.log(selectedTabs);
+            chrome.runtime.sendMessage({action: 'save', tabsArr: selectedTabs}, function (res) {
+                if (res === 'ok') {
+                    // if we are not saved/closed yet remove these
+                    $(dialogDiv).remove();
+                    $(wrapperDiv).remove();
+                }
+            });
         });
         saveButton.css({
             "position": "relative",
@@ -87,3 +143,13 @@
 
     }
 })();
+
+function filterTabs(tabsArr) {
+    return tabsArr.filter(function (tab) {
+        return !tab.pinned && !isOurTab(tab);
+    });
+}
+
+function isOurTab(tab) {
+    return tab.url.match(/chrome-extension:\/\/.+\/tabulator.html/i);
+}
