@@ -1,9 +1,9 @@
-// TODO hotkey to add current page/ right click on tab and clicking/ hold shift and click or sth
-// TODO  context instead of closing and reopening everything e.g. open all/ switch to
-// TODO folder groups/folder thumbnail view / expandable list groups
-// TODO sync with parse?? cloud sync across devices or in chrome
-//TODO drag whole group? + grip icon so ppl know where to click and drag, drag and drop across groups
 //TODO password locked folders, open in incognito (?)
+// TODO folder groups/folder thumbnail view / expandable list groups
+// TODO  context instead of closing and reopening everything e.g. open all/ switch to
+// TODO hotkey to add current page/ right click on tab and clicking/ hold shift and click or sth
+// TODO sync with parse?? cloud sync across devices or in chrome -> chrome.storage.sync?
+//TODO drag whole group? + grip icon so ppl know where to click and drag, drag and drop across groups
 // TODO consume tabs that have been left open too long, categorize by time quantum??
 // TODO share groups of tabs
 // TODO quick jump with overlay/ popup, like AceJump
@@ -37,8 +37,7 @@
     function closeTabs(tabsArr) {
         var tabsToClose = tabsArr.map(function (tab) {
                 return tab.id
-            }),
-            i;
+            });
 
         chrome.tabs.remove(tabsToClose, function () {
             if (chrome.runtime.lastError) {

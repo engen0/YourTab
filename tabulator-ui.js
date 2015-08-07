@@ -1,140 +1,123 @@
-;
 (function (m) {
     'use strict';
-    chrome.runtime.onMessage.addListener(function (req, sender, sendRes) {
-        switch (req.action) {
-            case 'refresh':
-                console.log("refreshing...")
-                sendRes('ok');
-                break;
-            default:
-                sendRes('nope');
-                break;
-        }
-    });
-    chrome.storage.sync.get(function (storage) {
+    var tabs = {},
+        tabGroups,
+        opts;
+    // alias for Array
+    tabs.TabGroupsList = Array;
 
-        var tabs = {}, // to-be module
-            tabGroups = storage.tabGroups || [], // tab groups
-            opts = storage.options || {
-                    deleteTabOnOpen: 'no'
-                };
-
-        function saveTabGroups(json) {
-            chrome.storage.sync.set({tabGroups: json});
-        }
-
-        // model entity
-        // 'data' is meant to be a tab group object from localStorage
-        tabs.TabGroup = function (data) {
-            this.date = m.prop(data.date);
-            this.id = m.prop(data.id);
-            this.tabs = m.prop(data.tabs);
-        };
-
-        // alias for Array
-        tabs.TabGroupsList = Array;
-
-        // view-model
-        tabs.vm = new function () {
-            var vm = {};
-            vm.init = function () {
-                // list of tab groups
-                vm.list = new tabs.TabGroupsList();
-
-                vm.rmGroup = function (i) {
-                    // remove view from array
-                    vm.list.splice(i, 1);
-                    // remove from localStorage
-                    tabGroups.splice(i, 1);
-                    // save
-                    saveTabGroups(tabGroups);
-                };
-
-                vm.rmTab = function (i, ii) {
-                    // remove from view array
-                    //vm.list[i].tabs().splice(ii, 1);
-                    // remove from localStorage
-                    tabGroups[i].tabs.splice(ii, 1);
-                    // save
-                    saveTabGroups(tabGroups);
-                };
+    // view-model
+    tabs.vm = new function () {
+        var vm = {};
+        vm.init = function (tabGroups) {
+            // list of tab groups
+            var timeSort = function(tabGroups){
+                return tabGroups.sort(function (a, b) {
+                    return b.id - a.id;
+                });
             };
-            return vm;
-        };
 
-        tabs.controller = function () {
-            var i;
-            tabs.vm.init();
-            tabGroups.sort(function(a,b){
-                return b.id - a.id;
-            }).forEach(function(tabGroup){
-                tabs.vm.list.push(new tabs.TabGroup(tabGroup))
-            });
-        };
+            vm.list = timeSort(tabGroups);
+            vm.rmGroup = function (i) {
+                vm.list.splice(i, 1);
+                //tabGroups.splice(i, 1);
+                saveTabGroups(vm.list);
+            };
 
-        tabs.view = function () {
-            if (tabs.vm.list.length === 0) {
-                return m('p', 'No tab groups have been saved yet, or you deleted them all...');
+            vm.rmTab = function (i, ii) {
+                if(vm.list[i].tabs.length == 1){
+                    vm.rmGroup(i);
+                }else{
+                    vm.list[i].tabs.splice(ii, 1);
+                    saveTabGroups(vm.list);
+                }
+            };
+
+            vm.update = function (newArr) {
+                vm.list = timeSort(newArr);
+                m.redraw();
             }
+        };
+        return vm;
+    };
 
-            // foreach tab group
-            return tabs.vm.list.map(function (group, i) {
-                // group
-                return m('div.group', [
-                    m('div.group-title', [
-                        m('span.delete-link', {
-                            onclick: function () {
+    function saveTabGroups(json) {
+        chrome.storage.sync.set({tabGroups: json});
+    }
+
+    tabs.view = function () {
+        if (tabs.vm.list.length === 0) {
+            return m('p', 'No tab groups have been saved yet, or you deleted them all...');
+        }
+
+        // foreach tab group
+        return tabs.vm.list.map(function (group, i) {
+            // group
+            return m('div.group', [
+                m('div.group-title', [
+                    m('span.delete-link', {
+                        onclick: function () {
+                            tabs.vm.rmGroup(i);
+                        }
+                    }),
+                    m('span.group-amount', group.tabs.length + ' Tabs'),
+                    ' ',
+                    m('span.group-date', moment(new Date(group.id)).fromNow()),
+                    ' ',
+                    m('span.restore-all', {
+                        onclick: function () {
+                            if (opts.deleteTabOnOpen === 'yes') {
                                 tabs.vm.rmGroup(i);
                             }
-                        }),
-                        m('span.group-amount', group.tabs().length + ' Tabs'),
-                        ' ',
-                        m('span.group-date', moment(new Date(group.id())).fromNow()),
-                        ' ',
-                        m('span.restore-all', {
-                            onclick: function () {
-
-
-                                // reason this goes before opening the tabs and not
-                                // after is because it doesn't work otherwise
-                                // I imagine it's because you changed tab and so
-                                // that messes with the focus of the JS somehow...
-                                if (opts.deleteTabOnOpen === 'yes') {
-                                    tabs.vm.rmGroup(i);
-                                }
-                                group.tabs.forEach(function(){
-                                    chrome.tabs.create({
-                                        url: group.tabs()[i].url,
-                                    });
+                            group.tabs.forEach(function () {
+                                chrome.tabs.create({
+                                    url: group.tabs[i].url
                                 });
-                            }
-                        }, 'Restore group')
-                    ]),
+                            });
+                        }
+                    }, 'Restore group')
+                ]),
 
-                    // foreach tab
-                    m('ul', group.tabs().map(function (tab, ii) {
-                        return m('li', [
-                            m('span.delete-link', {
-                                onclick: function () {
+                // foreach tab
+                m('ul', group.tabs.map(function (tab, ii) {
+                    return m('li', [
+                        m('span.delete-link', {
+                            onclick: function () {
+                                tabs.vm.rmTab(i, ii);
+                            }
+                        }),
+                        m('img', {src: tab.favIconUrl, height: '16', width: '16'}),
+                        ' ',
+                        m('a.link', {
+                            onclick: function () {
+                                if (opts.deleteTabOnOpen === 'yes') {
                                     tabs.vm.rmTab(i, ii);
                                 }
-                            }),
-                            m('img', {src: tab.favIconUrl, height: '16', width: '16'}),
-                            ' ',
-                            m('a.link', {
-                                onclick: function () {
-                                    if (opts.deleteTabOnOpen === 'yes') {
-                                        tabs.vm.rmTab(i, ii);
-                                    }
-                                },
-                                href: tab.url
-                            }, tab.title)
-                        ]);
-                    }))
-                ]);
-            });
+                            },
+                            href: tab.url
+                        }, tab.title)
+                    ]);
+                }))
+            ]);
+        });
+    };
+
+    chrome.storage.onChanged.addListener(function (changes, namespace) {
+        if (changes.tabGroups != null) {
+            tabs.vm.update(changes.tabGroups.newValue);
+        }
+    });
+
+    chrome.storage.sync.get(function (storage) {
+        tabGroups = storage.tabGroups || [] // tab groups
+        opts = storage.options || {
+                deleteTabOnOpen: 'no'
+            };
+
+        tabs.controller = function () {
+            tabs.vm.init(tabGroups);
         };
+
 
         // init the app
         m.module(document.getElementById('groups'), {controller: tabs.controller, view: tabs.view});
