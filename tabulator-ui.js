@@ -1,7 +1,17 @@
 ;
 (function (m) {
     'use strict';
-
+    chrome.runtime.onMessage.addListener(function (req, sender, sendRes) {
+        switch (req.action) {
+            case 'refresh':
+                console.log("refreshing...")
+                sendRes('ok');
+                break;
+            default:
+                sendRes('nope');
+                break;
+        }
+    });
     chrome.storage.sync.get(function (storage) {
 
         var tabs = {}, // to-be module
@@ -56,9 +66,11 @@
         tabs.controller = function () {
             var i;
             tabs.vm.init();
-            for (i = 0; i < tabGroups.length; i += 1) {
-                tabs.vm.list.push(new tabs.TabGroup(tabGroups[i]));
-            }
+            tabGroups.sort(function(a,b){
+                return b.id - a.id;
+            }).forEach(function(tabGroup){
+                tabs.vm.list.push(new tabs.TabGroup(tabGroup))
+            });
         };
 
         tabs.view = function () {
@@ -78,11 +90,11 @@
                         }),
                         m('span.group-amount', group.tabs().length + ' Tabs'),
                         ' ',
-                        m('span.group-date', moment(group.date()).format('HH:mm:ss, YYYY-MM-DD')),
+                        m('span.group-date', moment(new Date(group.id())).fromNow()),
                         ' ',
                         m('span.restore-all', {
                             onclick: function () {
-                                var i;
+
 
                                 // reason this goes before opening the tabs and not
                                 // after is because it doesn't work otherwise
@@ -91,13 +103,11 @@
                                 if (opts.deleteTabOnOpen === 'yes') {
                                     tabs.vm.rmGroup(i);
                                 }
-
-                                for (i = 0; i < group.tabs().length; i += 1) {
+                                group.tabs.forEach(function(){
                                     chrome.tabs.create({
                                         url: group.tabs()[i].url,
-                                        pinned: group.tabs()[i].pinned
                                     });
-                                }
+                                });
                             }
                         }, 'Restore group')
                     ]),
@@ -112,17 +122,13 @@
                             }),
                             m('img', {src: tab.favIconUrl, height: '16', width: '16'}),
                             ' ',
-                            m('span.link', {
+                            m('a.link', {
                                 onclick: function () {
                                     if (opts.deleteTabOnOpen === 'yes') {
                                         tabs.vm.rmTab(i, ii);
                                     }
-
-                                    chrome.tabs.create({
-                                        url: tab.url,
-                                        pinned: tab.pinned
-                                    });
-                                }
+                                },
+                                href: tab.url
                             }, tab.title)
                         ]);
                     }))

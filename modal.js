@@ -49,7 +49,7 @@
         var title = $('<h3></h3>').text("Select Tabs to Save");
         dialogDiv.append(title);
 
-        //Each tab
+        //Each tab = row + favIcon + checkbox + tabTitle
         var targetTabs = filterTabs(tabsArr);
         targetTabs.forEach(function (tab) {
             tab.selected = true;
@@ -91,18 +91,16 @@
             });
             checkbox.click(function () {
                 tab.selected = !tab.selected;
-                //$(this).prop('checked', false);
-            });
-
-            row.click(function () {
-                checkbox.click();
-                tab.selected = !tab.selected;
+                console.log("Checkbox clicked: "+tab.selected);
             });
 
             var tabTitle = $("<p> </p>").text(tab.title);
             tabTitle.css({
                 "display": "inline",
                 "margin-left": "2.5em"
+            });
+            tabTitle.click(function () {
+                checkbox.click();
             });
 
             row.append(checkbox);
@@ -112,11 +110,6 @@
         });
 
         // Buttons
-        // TODO checkbox next time
-        /*$('#checkAll').click(function () {
-         $('input:checkbox').prop('checked', this.checked);
-         });*/
-
         var saveButton = $("<button> Save </button>");
         saveButton.click(function () {
             var selectedTabs = targetTabs.filter(function (tab) {

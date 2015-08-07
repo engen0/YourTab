@@ -1,14 +1,12 @@
 // TODO hotkey to add current page/ right click on tab and clicking/ hold shift and click or sth
-// TODO quick jump with overlay/ popup
 // TODO  context instead of closing and reopening everything e.g. open all/ switch to
 // TODO folder groups/folder thumbnail view / expandable list groups
 // TODO sync with parse?? cloud sync across devices or in chrome
-//TODO make sure links are still there if window is closed (persisted + synced)
 //TODO drag whole group? + grip icon so ppl know where to click and drag, drag and drop across groups
 //TODO password locked folders, open in incognito (?)
 // TODO consume tabs that have been left open too long, categorize by time quantum??
 // TODO share groups of tabs
-
+// TODO quick jump with overlay/ popup, like AceJump
 
 ;
 (function () {
@@ -18,9 +16,7 @@
             date: new Date(),
             id: Date.now()
         };
-
         tabGroup.tabs = tabsArr;
-
         return tabGroup;
     }
 
@@ -52,7 +48,6 @@
     }
 
     function openOrGoToBackgroundPage(tabsArr) {
-        // TODO still opens multiple
         var extensionTabs = tabsArr.filter(function (tab) {
             return isOurTab(tab);
         }).map(function (tab) {
@@ -60,7 +55,6 @@
         });
 
         if (extensionTabs.length > 0) {
-            console.log('Our tab: ' + extensionTabs);
             chrome.tabs.update(extensionTabs[0], {'active': true})
         } else {
             chrome.tabs.create({url: chrome.extension.getURL('tabulator.html')});
