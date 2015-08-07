@@ -11,7 +11,7 @@
         var vm = {};
         vm.init = function (tabGroups) {
             // list of tab groups
-            var timeSort = function(tabGroups){
+            var timeSort = function (tabGroups) {
                 return tabGroups.sort(function (a, b) {
                     return b.id - a.id;
                 });
@@ -25,9 +25,9 @@
             };
 
             vm.rmTab = function (i, ii) {
-                if(vm.list[i].tabs.length == 1){
+                if (vm.list[i].tabs.length == 1) {
                     vm.rmGroup(i);
-                }else{
+                } else {
                     vm.list[i].tabs.splice(ii, 1);
                     saveTabGroups(vm.list);
                 }
@@ -109,7 +109,7 @@
     });
 
     chrome.storage.sync.get(function (storage) {
-        tabGroups = storage.tabGroups || [] // tab groups
+        tabGroups = storage.tabGroups || [];// tab groups
         opts = storage.options || {
                 deleteTabOnOpen: 'no'
             };

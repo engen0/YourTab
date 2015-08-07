@@ -77,9 +77,9 @@
                 "height": "16px",
                 "width": "16px",
                 "background-size": "contain",
-                "float":"left",
-                "margin-left":"0.5em",
-                "position":"absolute"
+                "float": "left",
+                "margin-left": "0.5em",
+                "position": "absolute"
             });
 
             var checkbox = $('<input>', {
@@ -87,11 +87,11 @@
                 "checked": true
             });
             checkbox.css({
-                "vertical-align":"middle"
+                "vertical-align": "middle"
             });
             checkbox.click(function () {
                 tab.selected = !tab.selected;
-                console.log("Checkbox clicked: "+tab.selected);
+                console.log("Checkbox clicked: " + tab.selected);
             });
 
             var tabTitle = $("<p> </p>").text(tab.title);

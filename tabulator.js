@@ -36,8 +36,8 @@
 
     function closeTabs(tabsArr) {
         var tabsToClose = tabsArr.map(function (tab) {
-                return tab.id
-            });
+            return tab.id
+        });
 
         chrome.tabs.remove(tabsToClose, function () {
             if (chrome.runtime.lastError) {
