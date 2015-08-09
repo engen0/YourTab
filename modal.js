@@ -42,7 +42,8 @@
             "overflow": "auto",
             "text-align": "left",
             "top": "20%",
-            "left": "43%"
+            "left": "43%",
+            "max-height": "65%"
         });
 
         // Title
