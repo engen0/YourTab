@@ -3,8 +3,6 @@
     var tabs = {},
         tabGroups,
         opts;
-    // alias for Array
-    tabs.TabGroupsList = Array;
 
     // view-model
     tabs.vm = new function () {
@@ -79,7 +77,15 @@
                 ]),
 
                 // foreach tab
-                m('ul', group.tabs.map(function (tab, ii) {
+                m('ul[draggable=true]',{
+                //className   : item.dragOver ? 'dragOver' : '',
+                //ondrop      : ctrl.drop( item, list, itemIndex ),
+                //ondragleave : ctrl.off( item ),
+                //ondragover  : ctrl.on( item ),
+                //ondragstart : ctrl.start( item, list, itemIndex ),
+                ondragstart : alert("yoyo")
+                //key         : item.uid
+            }, group.tabs.map(function (tab, ii) {
                     return m('li', [
                         m('span.delete-link', {
                             onclick: function () {

@@ -2,6 +2,9 @@
 
 All changes that would affect users will be listed in this file.
 
+## 0.8.0-alpha - 2015-08-07
+Major bug fixes. Modal with checkboxes to select what to save.
+
 ## 0.7.0-alpha - 2014-11-26
 
 Fixed some bugs with which tab gets open.  Changed approach to opening a link

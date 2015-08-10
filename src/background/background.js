@@ -56,7 +56,7 @@
         if (extensionTabs.length > 0) {
             chrome.tabs.update(extensionTabs[0], {'active': true})
         } else {
-            chrome.tabs.create({url: chrome.extension.getURL('tabulator.html')});
+            chrome.tabs.create({url: chrome.extension.getURL('src/background/background.html')});
         }
     }
 

@@ -1,15 +1,15 @@
 {
   "manifest_version": 2,
   "name": "Tabulator",
-  "version": "0.7.0",
-  "description": "Like OneTab but leaner and FOSS",
+  "version": "0.8.0",
+  "description": "Keeping Tabs on them Tabs",
   "icons": {},
   "browser_action": {
-    "default_popup": "popup.html",
+    "default_popup": "src/popup/popup.html",
     "default_title": "Tabulator"
   },
   "background": {
-    "page": "tabulator.html",
+    "page": "src/background/background.html",
     "persistent": false
   },
   "commands": {
@@ -26,13 +26,13 @@
         "<all_urls>"
       ],
       "js": [
-        "modal.js",
+        "src/modal/modal.js",
         "assets/jquery.min.js",
         "assets/mithril.min.js"
       ]
     }
   ],
-  "options_page": "options.html",
+  "options_page": "src/options/options.html",
   "permissions": [
     "tabs",
     "activeTab",
