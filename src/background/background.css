@@ -94,6 +94,14 @@ li {
 	text-decoration: underline;
 }
 
+li {
+	cursor :grab;
+
+}
+li[class='dragOver'] {
+	 background-color: mediumpurple;
+}
+
 /**/
 /* HEADER STYLES */
 /**/

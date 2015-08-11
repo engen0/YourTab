@@ -145,7 +145,7 @@ function curry(fx) {
 }
 
 function isOurTab(tab) {
-    return tab.url.match(/chrome-extension:\/\/.+\/tabulator.html/i);
+    return tab.url == chrome.extension.getURL('src/background/background.html');
 }
 
 var debug = true;
