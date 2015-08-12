@@ -8,22 +8,24 @@
         chrome.storage.sync.get('options', function (storage) {
             var opts = storage.options || {};
 
-            if (opts.deleteTabOnOpen === undefined) {
-                $('input[name="deleteTabOnOpen"][value="no"]').prop('checked', 'checked');
-            } else {
-                $('input[name="deleteTabOnOpen"][value="' + opts.deleteTabOnOpen + '"]').prop('checked', 'checked');
-            }
+            var deleteTabOnOpen = opts.deleteTabOnOpen || 'no';
+            $('input[name="deleteTabOnOpen"][value="' + deleteTabOnOpen+ '"]').prop('checked', 'checked');
+
+            var enableAltQ= opts.enableAltQ || 'no';
+            $('input[name="enableAltQ"][value="' + enableAltQ + '"]').prop('checked', 'checked');
         });
     });
 
     document.getElementsByName('save')[0].addEventListener('click', function () {
         var deleteTabOnOpen = document.querySelector('input[name="deleteTabOnOpen"]:checked').value;
+        var enableAltQ = document.querySelector('input[name="enableAltQ"]:checked').value;
 
         chrome.storage.sync.set({
             options: {
-                deleteTabOnOpen: deleteTabOnOpen
+                deleteTabOnOpen: deleteTabOnOpen,
+                enableAltQ: enableAltQ
             }
-        }, function () { // show "settings saved" notice thing
+        }, function () {
             document.getElementById('saved').style.display = 'block';
             window.setTimeout(function () {
                 document.getElementById('saved').style.display = 'none';

@@ -1,9 +1,9 @@
 //TODO password locked folders, open in incognito (?)
-// TODO folder groups/folder thumbnail view / expandable list groups
-// TODO  context instead of closing and reopening everything e.g. open all/ switch to
+// TODO Shrink lists to names / expandable list groups
+// TODO folder groups/folder thumbnail view
+// TODO context instead of closing and reopening everything e.g. open all/ switch to
 // TODO hotkey to add current page/ right click on tab and clicking/ hold shift and click or sth
 // TODO sync with parse?? cloud sync across devices or in chrome -> chrome.storage.sync?
-//TODO drag whole group? + grip icon so ppl know where to click and drag, drag and drop across groups
 // TODO consume tabs that have been left open too long, categorize by time quantum??
 // TODO share groups of tabs
 // TODO quick jump with overlay/ popup, like AceJump
@@ -14,7 +14,8 @@
     function makeTabGroup(tabsArr) {
         var tabGroup = {
             date: new Date(),
-            id: Date.now()
+            id  : Date.now(),
+            name: ''
         };
         tabGroup.tabs = tabsArr;
         return tabGroup;
@@ -82,25 +83,30 @@
                 break;
         }
     });
+    var Options = {};
+    chrome.storage.sync.get('options', function (storage) {
+        Options = storage.options || {};
+        var enableAltQ= Options.enableAltQ || 'no';
+        if(enableAltQ === 'yes'){
 
-    chrome.commands.onCommand.addListener(function (command) {
-        console.log('Command:', command);
-        switch (command) {
-            case 'toggle-jump-index':
-                console.log("Tab: " + getCurrentTab());
-                break;
         }
     });
 
+    chrome.commands.onCommand.addListener(function (command) {
+        switch (command) {
+            case 'save-current':
+                var enableAltQ= Options.enableAltQ || 'no';
+                if(enableAltQ === 'yes'){
+                    chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
+                        saveTabs(tabs)
+                    });
+                }
+                break;
+        }
+    });
 }());
 
 // HELPERS
-var getCurrentTab = function () {
-    chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
-        console.log(tabs[0]);
-    });
-};
-
 var getAllTabsAndThen = function (callback) {
     chrome.tabs.query({currentWindow: true}, function (tabsArr) {
         callback(tabsArr);

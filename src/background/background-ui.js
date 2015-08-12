@@ -2,11 +2,13 @@ chrome.storage.sync.get(function (storage) {
     init(storage);
 });
 
-var TabGroups = {},
+var TabGroups = [],
     Options;
 
 function init(storage) {
-    TabGroups.list = storage.tabGroups || [];// tab groups
+    TabGroups = storage.tabGroups.sort(function (a, b) {
+            return b.id - a.id;
+        }) || [];
     Options = storage.options || {
             deleteTabOnOpen: 'no'
         };
@@ -16,35 +18,37 @@ function init(storage) {
     tabGroups.controller = function () {
         var ctrl = this;
         // Operations
-        ctrl.tabGroups = TabGroups.list.sort(function (a, b) {
-            return b.id - a.id;
-        });
         ctrl.removeGroup = function (idx) {
-            ctrl.tabGroups.splice(idx, 1);
+            TabGroups.splice(idx, 1);
         };
         ctrl.restoreAll = function (idx) {
-            if (Options.deleteTabOnOpen === 'yes') {
-                ctrl.removeGroup(idx);
-            }
-            var tabGroup = ctrl.tabGroups[idx];
-            tabGroup.tabs.forEach(function () {
+            var tabGroup = TabGroups[idx];
+            tabGroup.tabs.forEach(function (tab) {
                 chrome.tabs.create({
-                    url: tabGroup.tabs[i].url
+                    url: tab.url
                 });
             });
+            if (Options.deleteTabOnOpen === 'yes') {
+                ctrl.removeGroup(idx);
+                ctrl.save();
+            }
         };
         ctrl.save = function () {
-            chrome.storage.sync.set({tabGroups: ctrl.tabGroups});
+            chrome.storage.sync.set({tabGroups: TabGroups});
         };
         ctrl.moveItem = function (srcGroupIdx, srcItemIdx, toGroupIdx) {
-            var srcGroup = ctrl.tabGroups[srcGroupIdx].tabs;
+            var srcGroup = TabGroups[srcGroupIdx].tabs;
             var srcTab = srcGroup[srcItemIdx];
-            ctrl.tabGroups[toGroupIdx].tabs.push(srcTab);
+            TabGroups[toGroupIdx].tabs.push(srcTab);
             if (srcGroup.length > 1) {
                 srcGroup.splice(srcItemIdx, 1);
             } else {
                 ctrl.removeGroup(srcGroupIdx);
             }
+        };
+        ctrl.renameGroup = function (idx) {
+            console.log(idx);
+            TabGroups[idx].name = prompt("Rename Group to: ", TabGroups[idx].name)
         };
 
         // Handlers
@@ -92,7 +96,7 @@ function init(storage) {
     }
 
     tabGroups.view = function (ctrl) {
-        return ctrl.tabGroups.map(function (group, idx) {
+        return TabGroups.map(function (group, idx) {
             return m('div.group', {
                 ondragenter: ctrl.onDragEnter(),
                 ondragover: function (event) {
@@ -108,16 +112,22 @@ function init(storage) {
                             ctrl.save();
                         }
                     }),
-                    m('span.group-amount', group.tabs.length + ' Tabs'),
+                    m('span.group-name', group.name == null || group.name === '' ? group.tabs.length + ' Tabs' : group.name),
                     ' ',
                     m('span.group-date', moment(new Date(group.id)).fromNow()),
                     ' ',
-                    m('span.restore-all', {
+                    m('span.clickable', {
                         onclick: function () {
                             ctrl.restoreAll(idx);
+                        }
+                    }, 'Restore All'),
+                    ' ',
+                    m('span.clickable', {
+                        onclick: function () {
+                            ctrl.renameGroup(idx);
                             ctrl.save();
                         }
-                    }, 'Restore group')
+                    }, 'Rename')
                 ]),
                 m('ul', tabs.view(new tabs.controller(ctrl, group.tabs, idx))
                 )
@@ -192,14 +202,18 @@ function init(storage) {
                         }
                     },
                     href: tab.url
-                }, tab.title)
+                }, tab.title),
+                ' ',
+                m('span.grabbable', '||')
             ]);
         })
     };
 
     chrome.storage.onChanged.addListener(function (changes, namespace) {
         if (changes.tabGroups != null) {
-            TabGroups.list = changes.tabGroups.newValue;
+            TabGroups = changes.tabGroups.newValue.sort(function (a, b) {
+                return b.id - a.id;
+            });
             m.redraw();
         }
     });

@@ -1,24 +1,10 @@
-# Tabulator
+# The Tab
 
-[![Gratipay (Gittip) for Greduan](http://img.shields.io/gratipay/Greduan.svg)](https://gratipay.com/Greduan/)
+Originally forked from Greduan's [Tabulator](https://github.com/Greduan/chrome-ext-tabulator), but modified it so much I decided to rehost it in a new repo.
 
-Like OneTab but leaner and FOSS.  Named "Tabulator".
+A Chrome extension that keeps tabs on your tabs. Whenever you have too many tabs, put all of them on The Tab with a click and access them later!
 
-It started out with the idea of being a OneTab clone where I would release the
-source code but immediately I found stuff I could do better and lighter than
-OneTab.  For example OneTab runs constantly, while this runs only when it's
-called or the tab groups page is displayed.  (Event pages [this] vs. persistent
-background page [OneTab].)
-
-Currently it is near to completion but still in development, stuff might break.
-
-I am not yet going to provide usage or installation instructions as this is not
-yet ready for use, and at this point if you want to use it you really should be
-the kind of user who knows how to do this already. :)
-
-A screenshot of the semi-current progress:
-
-![Screenshot of the groups page](/images/screenshot.jpg)
+Started as a OneTab open source clone, but more features are getting added in!
 
 ## License
 

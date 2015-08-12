@@ -22,4 +22,8 @@
         });
     });
 
+    document.getElementById('options').addEventListener('click', function () {
+        chrome.tabs.create({url: chrome.extension.getURL('src/options/options.html')});
+    });
+
 }());

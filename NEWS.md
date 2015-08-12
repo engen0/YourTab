@@ -2,6 +2,9 @@
 
 All changes that would affect users will be listed in this file.
 
+## 0.8.1-alpha - 2015-08-11
+Drag & Drop between your tab groups!
+
 ## 0.8.0-alpha - 2015-08-07
 Major bug fixes. Modal with checkboxes to select what to save.
 

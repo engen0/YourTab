@@ -13,11 +13,11 @@
     "persistent": false
   },
   "commands": {
-    "toggle-jump-index": {
+    "save-current": {
       "suggested_key": {
-        "default": "Ctrl+Q"
+        "default": "Alt+Q"
       },
-      "description": "Toggle jump index on tabs."
+      "description": "Save current tab."
     }
   },
   "content_scripts": [
