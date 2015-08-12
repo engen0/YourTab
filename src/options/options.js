@@ -1,8 +1,6 @@
 ;
 (function ($) {
-    'use strict'
-
-    var opts = {};
+    'use strict';
 
     document.addEventListener('DOMContentLoaded', function () {
         chrome.storage.sync.get('options', function (storage) {
