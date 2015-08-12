@@ -26,4 +26,9 @@
         chrome.tabs.create({url: chrome.extension.getURL('src/options/options.html')});
     });
 
+    document.getElementById('save-current').addEventListener('click', function () {
+        chrome.runtime.sendMessage({action: 'save-current'});
+        window.close();
+    });
+
 }());

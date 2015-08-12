@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YourTab",
-  "version": "0.8.0",
+  "version": "0.8.2",
   "description": "Keeping Tabs on them Tabs",
   "browser_action": {
     "default_popup": "src/popup/popup.html",

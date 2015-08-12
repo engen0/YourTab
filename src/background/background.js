@@ -13,7 +13,7 @@
     function makeTabGroup(tabsArr) {
         var tabGroup = {
             date: new Date(),
-            id  : Date.now(),
+            id: Date.now(),
             name: ''
         };
         tabGroup.tabs = tabsArr;
@@ -77,6 +77,11 @@
                 sendRes('ok');
                 getAllTabsAndThen(openOrGoToBackgroundPage);
                 break;
+            case 'save-current':
+                chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
+                    saveTabs(tabs)
+                });
+                break;
             default:
                 sendRes('nope');
                 break;
@@ -85,8 +90,8 @@
     var Options = {};
     chrome.storage.sync.get('options', function (storage) {
         Options = storage.options || {};
-        var enableAltQ= Options.enableAltQ || 'no';
-        if(enableAltQ === 'yes'){
+        var enableAltQ = Options.enableAltQ || 'no';
+        if (enableAltQ === 'yes') {
 
         }
     });
@@ -94,8 +99,8 @@
     chrome.commands.onCommand.addListener(function (command) {
         switch (command) {
             case 'save-current':
-                var enableAltQ= Options.enableAltQ || 'no';
-                if(enableAltQ === 'yes'){
+                var enableAltQ = Options.enableAltQ || 'no';
+                if (enableAltQ === 'yes') {
                     chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
                         saveTabs(tabs)
                     });
