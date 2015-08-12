@@ -4,7 +4,7 @@
 // TODO folder groups/folder thumbnail view
 // TODO manage tabs by session e.g. save all the tabs now and change to another set of tabs/ merge the sessions
 // TODO sync with parse?? cloud sync across devices
-// TODO share groups of tabs
+// TODO share groups of tabs / backup
 // TODO quick jump with overlay/ popup, like AceJump (seems like it's undoable)
 
 ;

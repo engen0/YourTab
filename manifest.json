@@ -1,12 +1,12 @@
 {
   "manifest_version": 2,
-  "name": "Tabulator",
+  "name": "YourTab",
   "version": "0.8.0",
   "description": "Keeping Tabs on them Tabs",
   "icons": {},
   "browser_action": {
     "default_popup": "src/popup/popup.html",
-    "default_title": "Tabulator"
+    "default_title": "YourTab"
   },
   "background": {
     "page": "src/background/background.html",
