@@ -1,12 +1,11 @@
-//TODO password locked folders, open in incognito (?)
+// Nifty command line
+//TODO password locked folders, only appears in incognito (?)
 // TODO Shrink lists to names / expandable list groups
 // TODO folder groups/folder thumbnail view
-// TODO context instead of closing and reopening everything e.g. open all/ switch to
-// TODO hotkey to add current page/ right click on tab and clicking/ hold shift and click or sth
-// TODO sync with parse?? cloud sync across devices or in chrome -> chrome.storage.sync?
-// TODO consume tabs that have been left open too long, categorize by time quantum??
+// TODO manage tabs by session e.g. save all the tabs now and change to another set of tabs/ merge the sessions
+// TODO sync with parse?? cloud sync across devices
 // TODO share groups of tabs
-// TODO quick jump with overlay/ popup, like AceJump
+// TODO quick jump with overlay/ popup, like AceJump (seems like it's undoable)
 
 ;
 (function () {

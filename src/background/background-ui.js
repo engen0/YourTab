@@ -108,8 +108,10 @@ function init(storage) {
                 m('div.group-title', [
                     m('span.delete-link', {
                         onclick: function () {
-                            ctrl.removeGroup(idx);
-                            ctrl.save();
+                            if(confirm('Are you sure you want to delete this group?')){
+                                ctrl.removeGroup(idx);
+                                ctrl.save();
+                            }
                         }
                     }),
                     m('span.group-name', group.name == null || group.name === '' ? group.tabs.length + ' Tabs' : group.name),
