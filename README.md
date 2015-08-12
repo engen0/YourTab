@@ -8,9 +8,9 @@ A Chrome extension that keeps tabs on your tabs. Whenever you have too many tabs
 
 # Current Features:
 
---* Save All Tabs in a click, or choose the ones you want to save!
---* Name your Tab Groups and drag and drop stuff into them next time!
---* Option to use Alt + Q to Save the current Tab
++ Save All Tabs in a click, or choose the ones you want to save!
++ Name your Tab Groups and drag and drop stuff into them next time!
++ Option to use Alt + Q to Save the current Tab
 
 Any issues, feedback and suggestions? Voice it out here or send in a pull request!
 
