@@ -1,4 +1,6 @@
-# YourTab
+# YourTab - Chrome Extension
+
+Download the .crx from the latest release and drag into your Chrome to install!
 
 Originally forked from Greduan's [Tabulator](https://github.com/Greduan/chrome-ext-tabulator). There has been a lot of modifications ever since.
 
