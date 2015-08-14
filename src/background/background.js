@@ -16,22 +16,33 @@
             id: Date.now(),
             name: ''
         };
-        tabGroup.tabs = tabsArr;
+        // strip it to reduce size for chrome sync storage
+        tabGroup.tabs = tabsArr.map(function (tab) {
+            return {
+                title: tab.title,
+                url: tab.url,
+                favIconUrl: tab.favIconUrl,
+                id: tab.id
+            }
+        });
         return tabGroup;
     }
 
 
     function saveTabGroup(tabGroup) {
-        chrome.storage.sync.get('tabGroups', function (storage) {
-            var newArr = [];
 
+        chrome.storage.local.get('tabGroups', function (storage) {
+            var newArr = [];
             if (storage.tabGroups) {
                 newArr = storage.tabGroups;
             }
             newArr.push(tabGroup);
-
-            chrome.storage.sync.set({tabGroups: newArr});
+            // A better solution is to still use the async storage.sync api and set keys as
+            // the tabgroup ids, but it's quite some work and not worth the time for now.
+            // Unless there's demand for it it'll be kiv-ed
+            chrome.storage.local.set({tabGroups: newArr});
         });
+
     }
 
     function closeTabs(tabsArr) {
@@ -63,8 +74,13 @@
     function saveTabs(tabsArr) {
         var tabGroup = makeTabGroup(tabsArr);
         getAllTabsAndThen(openOrGoToBackgroundPage);
-        saveTabGroup(tabGroup);
-        closeTabs(tabGroup.tabs);
+        try {
+            saveTabGroup(tabGroup);
+            closeTabs(tabGroup.tabs);
+        } catch (e) {
+            alert('There was an error while saving!');
+            console.log(e);
+        }
     }
 
     chrome.runtime.onMessage.addListener(function (req, sender, sendRes) {
@@ -88,11 +104,18 @@
         }
     });
     var Options = {};
-    chrome.storage.sync.get('options', function (storage) {
+    chrome.storage.local.get('options', function (storage) {
         Options = storage.options || {};
-        var enableAltQ = Options.enableAltQ || 'no';
-        if (enableAltQ === 'yes') {
-
+        //messy way to migrate T_T
+        if(!Options.migrateTo140815){
+            chrome.storage.sync.get(function(syncStorage){
+                Options.migrateTo140815 = true;
+                chrome.storage.local.set({
+                    tabGroups: syncStorage.tabGroups,
+                    options: syncStorage.options
+                })
+            });
+            chrome.storage.sync.clear(console.log('Successfully migrated to v140815'));
         }
     });
 

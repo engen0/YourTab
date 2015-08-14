@@ -1,4 +1,4 @@
-chrome.storage.sync.get(function (storage) {
+chrome.storage.local.get(function (storage) {
     init(storage);
 });
 
@@ -34,7 +34,7 @@ function init(storage) {
             }
         };
         ctrl.save = function () {
-            chrome.storage.sync.set({tabGroups: TabGroups});
+            chrome.storage.local.set({tabGroups: TabGroups});
         };
         ctrl.moveItem = function (srcGroupIdx, srcItemIdx, toGroupIdx) {
             var srcGroup = TabGroups[srcGroupIdx].tabs;

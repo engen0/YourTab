@@ -18,7 +18,7 @@
         var deleteTabOnOpen = document.querySelector('input[name="deleteTabOnOpen"]:checked').value;
         var enableAltQ = document.querySelector('input[name="enableAltQ"]:checked').value;
 
-        chrome.storage.sync.set({
+        chrome.storage.local.set({
             options: {
                 deleteTabOnOpen: deleteTabOnOpen,
                 enableAltQ: enableAltQ
