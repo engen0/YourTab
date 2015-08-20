@@ -9,6 +9,14 @@ body {
 	line-height: 1.4;
 }
 
+#icon {
+	display: inline;
+	position: absolute;
+	top: 30px;
+	left: 30px;
+	z-index: 10;
+}
+
 #container {
 	margin: 3%;
 	padding: 5px;

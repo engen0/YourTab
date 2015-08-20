@@ -8,6 +8,7 @@
 	<script src="../../assets/prefixfree.min.js"></script>
 </head>
 <body>
+<img id="icon" src="../../icons/icon128.png">
 <div id="container">
 	<header>
 		<h1>YourTab <span style="font-size: .6em;">Options</span></h1>
@@ -35,6 +36,11 @@
 
 				<p><input type="radio" name="enableAltQ" value="no"> Disable</label></p>
 			</div>
+		</div>
+		<div class="option">
+			<p>Tab limit: <input id="tabLimit" type="text" name="tabLimit" value="0"></p>
+			<p><input type="radio" name="autoTabLimit" value="yes"> Auto</label></p>
+			<p><input type="radio" name="autoTabLimit" value="no"> Manual</label></p>
 		</div>
 		<button name="save">Save options</button>
 		<div id="saved">Options saved.</div>

@@ -23,11 +23,35 @@
                 url: tab.url,
                 favIconUrl: tab.favIconUrl,
                 id: tab.id
-            }
+            };
         });
         return tabGroup;
     }
 
+    function testTabLimit() {
+    	chrome.storage.local.get('options', function (storage) {
+    		if (storage.tabLimit) {
+    			chrome.tabs.query({pinned: false, currentWindow: true}, function(tabsArr){
+                    if (tabsArr.length > storage.tabLimit) {
+                        var d = Date.now();
+                        var sortable = [];
+                        for (var tab in tabTimes) {
+                            sortable.push([tab, tabTimes[tab]]);
+                        }
+                        sortable.sort(function(a, b) {
+                            return ((d - a) - (d - b));
+                        });
+                        sortable = sortable.slice(storage.tabLimit);
+                        sortable = sortable.map(function(elem){return elem[0];});
+                        tabsArr = tabsArr.filter(function(elem){
+                            return (sortable.indexOf(elem.id) >= 0);
+                        });
+                        saveTabs(tabsArr);
+                    }
+    			});
+    		}
+    	});
+    }
 
     function saveTabGroup(tabGroup) {
 
@@ -47,12 +71,12 @@
 
     function closeTabs(tabsArr) {
         var tabsToClose = tabsArr.map(function (tab) {
-            return tab.id
+            return tab.id;
         });
 
         chrome.tabs.remove(tabsToClose, function () {
             if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError)
+                console.error(chrome.runtime.lastError);
             }
         });
     }
@@ -65,7 +89,7 @@
         });
 
         if (extensionTabs.length > 0) {
-            chrome.tabs.update(extensionTabs[0], {'active': true})
+            chrome.tabs.update(extensionTabs[0], {'active': true});
         } else {
             chrome.tabs.create({url: chrome.extension.getURL('src/background/background.html')});
         }
@@ -95,25 +119,42 @@
                 break;
             case 'save-current':
                 chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
-                    saveTabs(tabs)
+                    saveTabs(tabs);
                 });
                 break;
+			case 'tab-limit':
+				testTabLimit();
+				break;
             default:
                 sendRes('nope');
                 break;
         }
     });
     var Options = {};
-    chrome.storage.local.get('options', function (storage) {
+	var tabTimes = {};
+	chrome.storage.local.get('options', function (storage) {
         Options = storage.options || {};
         //messy way to migrate T_T
+        if (storage.tabLimit) {
+            var tabTimes = {};
+            chrome.tabs.onCreated.addListener(function(tab) {
+        		tabTimes[tab.id] = Date.now();
+    			if (storage.autoTabLimit) {testTabLimit();}
+    		});
+            chrome.tabs.onAccessed.addListener(function(accessInfo) {
+                tabTimes[accessInfo.id] = Date.now();
+            });
+            chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+                delete tabTimes[tabId];
+            });
+        }
         if(!Options.migrateTo140815){
             chrome.storage.sync.get(function(syncStorage){
                 Options.migrateTo140815 = true;
                 chrome.storage.local.set({
                     tabGroups: syncStorage.tabGroups,
                     options: syncStorage.options
-                })
+                });
             });
             chrome.storage.sync.clear(console.log('Successfully migrated to v140815'));
         }
@@ -125,7 +166,7 @@
                 var enableAltQ = Options.enableAltQ || 'no';
                 if (enableAltQ === 'yes') {
                     chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
-                        saveTabs(tabs)
+                        saveTabs(tabs);
                     });
                 }
                 break;
@@ -137,7 +178,7 @@
 var getAllTabsAndThen = function (callback) {
     chrome.tabs.query({currentWindow: true}, function (tabsArr) {
         callback(tabsArr);
-    })
+    });
 };
 
 var trace = curry(function (str, x) {

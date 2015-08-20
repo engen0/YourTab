@@ -30,5 +30,10 @@
         chrome.runtime.sendMessage({action: 'save-current'});
         window.close();
     });
+	
+	document.getElementById('tab-limit').addEventListener('click', function () {
+        chrome.runtime.sendMessage({action: 'tab-limit'});
+        window.close();
+    });
 
 }());
